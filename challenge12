@@ -8,6 +8,8 @@
 import ipaddress
 from scapy.all import IP, ICMP, sr1, TCP
 import socket
+import ipaddress
+from scapy.all import *
 
 # Define the function to perform the ICMP ping sweep
 def sweep(network):
@@ -18,15 +20,25 @@ def sweep(network):
         # Send an ICMP echo request packet and wait for a response
         response = sr1(IP(dst=str(ip))/ICMP(), timeout=1, verbose=0)
         # Check if a response was received
-        if response:
-            # Display the IP address and ICMP code
-            print(f"{ip}: {response[ICMP].code}")
-            print(f"({network}) is up")
-            print("Network address of the network: ", network.network_address)
-            print("Network mask: ", network.netmask)
-            print("Total number of hosts under the network: ", network.num_addresses)
-    else:
-        print(f"No response from {ip}")
+        if response: 
+            if response[ICMP].code == 3:
+                # Display a message indicating that the network is blocking ICMP traffic
+                print(f"{ip}: Network is actively blocking ICMP traffic")
+            else:
+                # Display the IP address and ICMP code
+                print(f"{ip}: {response[ICMP].code}")
+                print("Network address of the network: ", network.network_address)
+                print("Network mask: ", network.netmask)
+                print("Total number of hosts under the network: ", network.num_addresses)
+                print(f"({network}) is up")
+                # Create an IPv4Network object from the CIDR block
+                ip_network = ipaddress.IPv4Network(network)
+                # Display the network mask from the IP address
+                print("Network mask from IP address: ", ip_network.netmask)
+                break
+        else:
+            print(f"No response from {ip}")
+
 
 # Define the function to perform the ICMP ping sweep
 def IPsweep(ip):
@@ -36,28 +48,37 @@ def IPsweep(ip):
     response = sr1(IP(dst=str(ip))/ICMP(), timeout=1, verbose=0)
     # Check if a response was received
     if response:
+        if response[ICMP].code == 3:
+        # Display a message indicating that the network is blocking ICMP traffic
+            print(f"{ip}: Network is actively blocking ICMP traffic")
         # Display the IP address and ICMP code
-        print(f"{ipA}: {response[ICMP].code}")
-        print(f"({ipA}) is up")
-        print("Is loopback: ", ip.is_loopback)
+        else:
+            print(f"{ipA}: {response[ICMP].code}")
+            print(f"({ipA}) is up")
+            ip_network = ipaddress.ip_network(ipA)
+            network_mask = ip_network.netmask
+            print("The network mask IP is: ", network_mask)
+        
     else:
         print(f"No response from {ip}")
 
 # Define the function to perform the ICMP ping sweep
-def icmp_ping_sweep(host):
+def Hostsweep(host):
     # Get the IP address of the host
-    try:
-        ip = socket.gethostbyname(host)
-    except socket.gaierror as e:
-        print(f"Error: {e}")
-        return
+    ip_address = socket.gethostbyname(host)
+    ip_network = ipaddress.ip_network(ip_address)
+    network_mask = ip_network.netmask
     # Send an ICMP echo request packet and wait for a response
     response = sr1(IP(dst=str(ip))/ICMP(), timeout=1, verbose=0)
     # Check if a response was received
     if response:
         # Display the IP address and ICMP code
-        print(f"{ip}: {response[ICMP].code}")
-        print(f"({ip}) is up")
+        if response[ICMP].code == 3:
+            # Display a message indicating that the network is blocking ICMP traffic
+            print(f"{ip}: Network is actively blocking ICMP traffic")
+        else:
+            print(f"{ip}: {response[ICMP].code}")
+            print("The network mask is: " , network_mask)
     else:
         print(f"No response from {ip}")
 
@@ -93,20 +114,25 @@ while True:
             else:
                 answer = (f"No respose received from {IP_add}")
                 print(f"Port {dsp_port} is {answer}")
-    if user == "Exit":
+    
+    if user.lower() == "Exit":
         break    
+    
     # ICMP sweep    
     if user == "ICMP":
         # Choices
         reply = input("IP, Host or Network? ")
-        # IP
+        # IP - IP of the place you want to scan
         if reply == "IP":
             ip = input("Please type an IP address: ")
             IPsweep(ip)
+        # Host - Host name
         if reply == "Host":
             host = input("Write host name: ")
-                  
+            Hostsweep(host)
+        # Nework - CIDR Block  
         if reply == "Network": 
             IPnetwork = input("Type a CIDR block: ")
             sweep(IPnetwork)
+    
     
