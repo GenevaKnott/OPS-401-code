@@ -5,7 +5,6 @@
 # Import Libiaries 
 import time
 import paramiko
-
 import ipaddress
 # Vars
 port = 22
@@ -23,18 +22,16 @@ def ip():
 
 def connect(password):
     # Connect to SSH with provided username and password
+    sshConnection.set_missing_host_key_policy(paramiko.AutoAddPolicy)
     try:
-        sshConnection.connect(host, port, user, password)
+        sshConnection.connect(host, port, user, password,timeout=30, banner_timeout=200)
         print(f"[+] Successfully authenticated with password: {password}")
         return True
     except paramiko.AuthenticationException:
         # Wrong password
         return False
-    except paramiko.SSHException:
+    except paramiko.SSHException as e:
         # Unable to establish SSH connection
-        return False
-    except paramiko.Exception as e:
-        # Other exceptions
         print(f"[-] Exception occurred: {e}")
         return False
 
@@ -87,7 +84,7 @@ def menu():
 # main
 while True:
    menu()
-   choice = input("Enter your choice")
+   choice = input("Enter your choice: ")
    if choice == "Mode 1":
        mode1()
    elif choice == "Mode 2":
