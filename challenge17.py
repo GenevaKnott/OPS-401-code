@@ -26,15 +26,17 @@ def connect(password):
     try:
         sshConnection.connect(host, port, user, password,timeout=30, banner_timeout=200)
         print(f"[+] Successfully authenticated with password: {password}")
+        sshConnection.close()
         return True
     except paramiko.AuthenticationException:
         # Wrong password
+        print("Incorrect password, trying new one: ")
         return False
-    except paramiko.SSHException as e:
+    except Exception as e:
         # Unable to establish SSH connection
         print(f"[-] Exception occurred: {e}")
         return False
-
+        
 def mode1():
     # User input word list file path
     filepath = input("Enter your dictionary filepath:\n")
