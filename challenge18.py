@@ -105,3 +105,32 @@ def mode4():
         else:
             print("None of the passwords worked.")
             return False
+        
+
+def menu():
+    print("Select an option:")
+    print("Mode 1: Iterator ")
+    print("Mode 2: Password Check")
+    print("Mode 3: Brute Force SSH")
+    print("Mode 4: Brute Force Zip File")
+    print("Exit to Exit")
+
+# main
+while True:
+   menu()
+   choice = input("Enter your choice: ")
+   if choice == "Mode 1":
+       mode1()
+   elif choice == "Mode 2":
+       mode2()
+   elif choice == "Mode 3":
+       host = input("Please provide an IP address to connect to: ")
+       user = input("Please provide a username: ")
+       mode3()
+   elif choice == "Mode 4":
+       mode4()
+   elif choice == "Exit":
+       break
+   else:
+       print("Invaild choice")
+# end
