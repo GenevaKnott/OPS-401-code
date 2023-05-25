@@ -13,6 +13,8 @@ target = "8.8.8.0"
 
 def ping_Status(target):
     try:
+         #Intentionally raise an exception to simulate an error
+        # raise ValueError("An intentional error occurred")   
         # Evaluate the response and assign success or failure to the status variable
         icmp = os.system("ping -c 1 " + target)
         if icmp == 0:
@@ -39,6 +41,8 @@ logger = logging.getLogger()
 # Setting the threshold
 logger.setLevel(logging.DEBUG)
 
+logger.info("Script started: ping_Status")
+
 while True:
     try:
         # Transmit a single ICMP ping packet to the target
@@ -50,3 +54,5 @@ while True:
         break
     except Exception as e:
         logger.exception("An error occurred")
+
+logger.info("Script completed: ping_Status")
