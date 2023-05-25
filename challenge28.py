@@ -37,6 +37,7 @@ Flogger.setFormatter(FFormat)
 logger.addHandler(Slogger)
 logger.addHandler(Flogger)
 
+logger.info("Script started: ping_Status")
 def ping_Status(target):
     try:
 
@@ -73,3 +74,4 @@ while True:
 
     except Exception as e:
         logger.exception("An error has occurred")
+logger.info("Script started: ping_Status")
