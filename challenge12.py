@@ -8,8 +8,6 @@
 import ipaddress
 from scapy.all import IP, ICMP, sr1, TCP
 import socket
-import ipaddress
-from scapy.all import *
 
 # Define the function to perform the ICMP ping sweep
 def sweep(network):
@@ -89,34 +87,28 @@ def Hostsweep(host):
 while True:
     user = input("Please pick on of the following: PortScan or ICMP or Exit ")
     # Port Scanner
-    if user.lower() == "PortScan":
-        # Define host Ip
-        IP_add = input("Please type in a IP address: ")
-        # define port range or specific set of ports to scan
+    # Port Scanner
+    if user == "Portscan":
+        # Define host IP
+        IP_add = input("Please type in an IP address: ")
+        # Define port range or specific set of ports to scan
         port_range = [22, 23, 80, 443, 3389]
-        # IP address ' 45.33.32.156 ' - test IP
+        # IP address '45.33.32.156' - test IP
         source_port = int(input("Enter source port number: "))
-        for dsp_port in port_range:
-            response = sr1(IP(dst=IP_add)/TCP(sport=source_port, dport=dsp_port, flags="S"), timeout=1, verbose=0)
-        # If flag Ox12 received, send a RST packet. Se1()
-            if (response.haslayer(TCP)):
-                if (response.getlayer(TCP).flags == 0x12):
-                    answer = ("Open")
-                    print(f"Port {dsp_port} is {answer}")
-                    
-            # If Ox14 received, notfiy if close
-            elif (response.haslayer(TCP)):
-                if (response.getlayer(TCP).flags == 0x14):
-                        answer = ("Closed")
-                        print(f"Port {dsp_port} is {answer}")
-                        
-            # If no flag was received 
+        for dst_port in port_range:
+            response = sr1(IP(dst=IP_add) / TCP(sport=source_port, dport=dst_port, flags="S"), timeout=1, verbose=0)
+            if response is not None:
+                if response.haslayer(TCP) and response.getlayer(TCP).flags == 0x12:
+                    print(f"Port {dst_port} is open")
+                elif response.haslayer(TCP) and response.getlayer(TCP).flags == 0x14:
+                    print(f"Port {dst_port} is closed")
+                else:
+                    print(f"No response received from {IP_add}")
             else:
-                answer = (f"No respose received from {IP_add}")
-                print(f"Port {dsp_port} is {answer}")
-    
-    if user.lower() == "Exit":
-        break    
+                print(f"No response received from {IP_add}")
+
+        if user == "Exit":
+            break    
     
     # ICMP sweep    
     if user == "ICMP":
@@ -134,5 +126,3 @@ while True:
         if reply == "Network": 
             IPnetwork = input("Type a CIDR block: ")
             sweep(IPnetwork)
-    
-    
