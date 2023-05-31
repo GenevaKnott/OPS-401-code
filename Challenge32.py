@@ -6,10 +6,12 @@
 import os
 import platform
 import hashlib
+from datetime import datetime
 
 # Prompt the user for a directory to search in
 path = input("Please enter the directory to search in: ")
-
+# Add a time stamp
+dt = datetime.now()
 
 # Search each file and folder recursively in the directory
 def find_all(path):
@@ -34,8 +36,7 @@ def hash(file):
                 chunk = file_obj.read(1024)
     # If no
     except FileNotFoundError:
-        return None
-    
+        return None  
     return hasher.hexdigest()
 
 # Call the function to search for the file
@@ -52,6 +53,7 @@ if search_result:
         for file_path in search_result:
             print("Location:", file_path)
             print("Hash: ", file_hash)
+            print("Timestamp: ", dt)
     else:
         print("Error in hash for files")
 else:
