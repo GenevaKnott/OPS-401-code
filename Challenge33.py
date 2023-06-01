@@ -7,6 +7,7 @@ import os
 import platform
 import hashlib
 from datetime import datetime
+import subprocess
 
 # Prompt the user for a directory to search in
 path = input("Please enter the directory to search in: ")
@@ -50,8 +51,8 @@ def search_files(path):
                 search_result.append(os.path.join(root, file))
     return search_result
 
-# Call the function to search for the file
-search_result = find_all(path)
+# Call the function to search for the files
+search_result = search_files(path)
 
 # Display the search result
 if search_result:
@@ -65,7 +66,21 @@ if search_result:
             print("Location:", file_path)
             print("Hash: ", file_hash)
             print("Timestamp: ", dt)
+            print('---------------')
+        print("Now passing to Virus-total: ")
     else:
         print("Error in hash for files")
 else:
     print("No items found in the specified directory.")
+
+
+# Pass hashes to Virus-Total
+# Set your environment variable before proceeding.
+apikey = input("Please put you API Key here: ")
+# apikey = os.getenv('API')
+path = r'C:\Users\maldo\OneDrive\Documents\Github\Ops-401\Code\virustotal-search.py'
+# Construct the command to call the script
+command = ['python3', path, '-k', apikey, '-m', file_hash]
+
+# Execute the command
+subprocess.call(command)
