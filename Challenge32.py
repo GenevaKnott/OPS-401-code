@@ -39,8 +39,20 @@ def hash(file):
         return None  
     return hasher.hexdigest()
 
+# Recursive function to search for files
+def search_files(path):
+    search_result = []
+    if os.path.isfile(path):
+        search_result.append(path)
+    elif os.path.isdir(path):
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                search_result.append(os.path.join(root, file))
+    return search_result
+
 # Call the function to search for the file
-search_result = find_all(path)
+# Call the function to search for the files
+search_result = search_files(path)
 
 # Display the search result
 if search_result:
